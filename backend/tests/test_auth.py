@@ -1,4 +1,4 @@
-"""Tests for Google Sign-In verification, JWT session tokens, and the single-allowed-email restriction."""
+"""Tests for Google Sign-In verification, JWT session tokens, and the allowed-email allowlist restriction."""
 from unittest.mock import patch
 
 import jwt
@@ -12,7 +12,7 @@ from app.core.config import settings
 @pytest.fixture(autouse=True)
 def _configure_auth_settings(monkeypatch):
     monkeypatch.setattr(settings, "GOOGLE_CLIENT_ID", "test-client-id")
-    monkeypatch.setattr(settings, "ALLOWED_GOOGLE_EMAIL", "owner@example.com")
+    monkeypatch.setattr(settings, "ALLOWED_GOOGLE_EMAIL", "owner@example.com,second-owner@example.com")
     monkeypatch.setattr(settings, "JWT_SECRET_KEY", "test-secret")
 
 
@@ -27,6 +27,13 @@ def test_verify_google_id_token_accepts_allowed_email():
         user = verify_google_id_token("fake-token")
     assert user.email == "owner@example.com"
     assert user.name == "Owner"
+
+
+def test_verify_google_id_token_accepts_second_allowed_email():
+    with patch("app.core.auth.google_id_token.verify_oauth2_token") as mock_verify:
+        mock_verify.return_value = {"email": "second-owner@example.com", "email_verified": True}
+        user = verify_google_id_token("fake-token")
+    assert user.email == "second-owner@example.com"
 
 
 def test_verify_google_id_token_rejects_other_email():

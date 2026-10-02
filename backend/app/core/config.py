@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     def allowed_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
 
+    @property
+    def allowed_google_emails(self) -> list[str]:
+        """ALLOWED_GOOGLE_EMAIL supports one or more comma-separated addresses."""
+        return [email.strip().lower() for email in self.ALLOWED_GOOGLE_EMAIL.split(",") if email.strip()]
+
 
 @lru_cache
 def get_settings() -> Settings:

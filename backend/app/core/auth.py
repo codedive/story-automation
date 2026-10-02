@@ -22,7 +22,7 @@ class GoogleUser:
 
 
 def verify_google_id_token(token: str) -> GoogleUser:
-    """Verify a Google Identity Services ID token and ensure it belongs to the one allowed account."""
+    """Verify a Google Identity Services ID token and ensure it belongs to an allowed account."""
     if not settings.GOOGLE_CLIENT_ID:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -38,7 +38,7 @@ def verify_google_id_token(token: str) -> GoogleUser:
     email = (payload.get("email") or "").lower().strip()
     if not payload.get("email_verified", False):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Google email is not verified.")
-    if not settings.ALLOWED_GOOGLE_EMAIL or email != settings.ALLOWED_GOOGLE_EMAIL.lower().strip():
+    if not settings.allowed_google_emails or email not in settings.allowed_google_emails:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This Google account is not authorized.")
 
     return GoogleUser(email=email, name=payload.get("name"), picture=payload.get("picture"))
@@ -65,6 +65,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials | None = Depends(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid session token.") from exc
 
     email = payload.get("sub")
-    if not email or email != settings.ALLOWED_GOOGLE_EMAIL.lower().strip():
+    if not email or email not in settings.allowed_google_emails:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized.")
     return email
