@@ -4,13 +4,14 @@ import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.models.scene import Scene
 from app.schemas.scene import SceneRead, SceneRegenerateRequest, SceneUpdate
 from app.services.serializers import scene_to_read
 from app.services.story_generator import StoryGenerationError, regenerate_scene
 
-router = APIRouter(prefix="/api/scenes", tags=["scenes"])
+router = APIRouter(prefix="/api/scenes", tags=["scenes"], dependencies=[Depends(get_current_user)])
 
 
 @router.put("/{scene_id}", response_model=SceneRead)

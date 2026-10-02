@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.models.category import Category
 from app.models.story import Story
 from app.schemas.category import CategoryCreate, CategoryRead, CategorySummary, CategoryUpdate
 from app.services.serializers import category_to_summary
 
-router = APIRouter(prefix="/api/categories", tags=["categories"])
+router = APIRouter(prefix="/api/categories", tags=["categories"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=list[CategorySummary])

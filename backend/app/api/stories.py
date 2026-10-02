@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.models.category import Category
 from app.models.story import Story, StoryStatus
@@ -12,7 +13,7 @@ from app.schemas.story import StoryGenerateRequest, StoryListItem, StoryManualCr
 from app.services.serializers import story_to_list_item, story_to_read
 from app.services.story_generator import StoryGenerationError, generate_story, get_next_episode_number
 
-router = APIRouter(prefix="/api", tags=["stories"])
+router = APIRouter(prefix="/api", tags=["stories"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("/categories/{category_id}/stories", response_model=list[StoryListItem])

@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 
 os.environ.setdefault("OPENAI_API_KEY", "test-key")
 
+from app.core.auth import get_current_user
 from app.core.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services.ai_provider import AIGenerationResult  # noqa: E402
@@ -40,6 +41,7 @@ def client(db_engine):
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = lambda: "test@example.com"
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()

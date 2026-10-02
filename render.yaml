@@ -23,3 +23,11 @@ services:
         value: "3"
       - key: ALLOWED_ORIGINS
         sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: ALLOWED_GOOGLE_EMAIL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_EXPIRE_MINUTES
+        value: "10080"

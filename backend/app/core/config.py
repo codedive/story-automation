@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     DUPLICATE_THRESHOLD: float = 72.0
     MAX_REGENERATION_ATTEMPTS: int = 3
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    GOOGLE_CLIENT_ID: str = ""
+    ALLOWED_GOOGLE_EMAIL: str = ""
+    JWT_SECRET_KEY: str = ""
+    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7
 
     @property
     def allowed_origins_list(self) -> list[str]:

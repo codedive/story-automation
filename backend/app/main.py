@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import categories, scenes, stories
+from app.api import auth, categories, scenes, stories
 from app.core.config import settings
 
 app = FastAPI(title="AI Story Factory API", version="1.0.0")
@@ -15,6 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(stories.router)
 app.include_router(scenes.router)
